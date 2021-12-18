@@ -1,29 +1,75 @@
-import * as PostViewService from '../repositories/PostViewRepository';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
-export const getUserPost = async (req, res, next) => {
+export const getPost = async post_id => {
   try {
-    const userPost = await PostViewService.getUserPost(req.body.user_id);
-    if (!userPost) {
-      res.send('아직 게시글이 존재하지 않습니다.');
-    } else {
-      res.status(200).send(userPost);
-    }
+    return await prisma.post.findUnique({
+      where: {
+        id: post_id,
+      },
+      include: {
+        author: true,
+        image: true,
+        hashtags: true,
+      },
+    });
   } catch (err) {
     console.error(err);
-    next(err);
   }
 };
 
-export const getAllPost = async (req, res, next) => {
+export const getUserPost = async user_account => {
   try {
-    const allPost = await PostViewService.getAllPost();
-    if (!allPost) {
-      res.send('아직 게시글이 존재하지 않습니다.');
-    } else {
-      res.status(200).send(allPost);
-    }
+    return await prisma.user.findMany({
+      where: {
+        account: user_account,
+      },
+      include: {
+        posts: {
+          include: {
+            image: true,
+            hashtags: true,
+          },
+        },
+      },
+    });
   } catch (err) {
     console.error(err);
-    next(err);
+  }
+};
+
+export const getAllPost = async () => {
+  try {
+    console.log('hi');
+    return await prisma.post.findMany({
+      include: {
+        author: true,
+        image: true,
+        hashtags: true,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const getRecentPost = async data => {
+  try {
+    console.log(data);
+    return await prisma.post.findMany({
+      take: 4,
+      where: {
+        user_id: data.user_id,
+      },
+      orderBy: {
+        createAt: 'desc',
+      },
+      include: {
+        image: true,
+        hashtags: true,
+      },
+    });
+  } catch (err) {
+    console.error(err);
   }
 };

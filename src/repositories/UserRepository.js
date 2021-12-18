@@ -49,3 +49,15 @@ export const findUserById = async id => {
     console.error(err);
   }
 };
+
+export const findUserByAccount = async account => {
+  try {
+    return await prisma.user.findUnique({
+      where: {
+        account,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};

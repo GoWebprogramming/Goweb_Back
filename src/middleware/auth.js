@@ -1,10 +1,27 @@
 // import { getTagById } from '../repositories/TagRepository';
-// import { findUserByAccount } from '../repositories/UserRepository';
+import { findUserByAccount } from '../repositories/UserRepository';
 export const isLoggined = (req, res, next) => {
   if (req.isAuthenticated()) {
     next();
   } else {
     res.status(401).send('잘못된 접근입니다.');
+  }
+};
+
+export const checkUserWhenGet = async (req, res, next) => {
+  try {
+    const sessionUser = req.session.passport.user.id;
+    if (req.params.user_id !== undefined && parseInt(req.params.user_id) === sessionUser) return next();
+    else if (req.params.account !== undefined) {
+      const user = await findUserByAccount(req.params.account);
+      if (user.id === sessionUser) {
+        console.log('hi');
+        return next();
+      }
+    }
+    return res.status(400).send('잘못된 요청입니다.');
+  } catch (err) {
+    console.error(err);
   }
 };
 
