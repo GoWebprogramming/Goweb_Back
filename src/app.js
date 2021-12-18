@@ -11,6 +11,7 @@ import PostController from './controllers/PostController';
 import PostViewController from './controllers/PostViewController';
 import TagController from './controllers/TagController';
 import KeywordController from './controllers/KeywordController';
+import SearchController from './controllers/SearchController';
 
 const app = express();
 
@@ -38,6 +39,7 @@ app.use('/posts', PostController);
 app.use('/postview', PostViewController);
 app.use('/tag', TagController);
 app.use('/keyword', KeywordController);
+app.use('/search', SearchController);
 
 app.listen(env.PORT, () => {
   console.log('서버시작');
