@@ -7,6 +7,8 @@ import passport from 'passport';
 import env from '../configs';
 import passportSession from '../configs/passport';
 import UserController from './controllers/UserController';
+import PostController from './controllers/PostController';
+import PostViewController from './controllers/PostViewController';
 const app = express();
 
 app.use(morgan('dev'));
@@ -29,6 +31,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/users', UserController);
+app.use('/posts', PostController);
+app.use('/postview', PostViewController);
 app.listen(env.PORT, () => {
   console.log('서버시작');
 });
