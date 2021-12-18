@@ -8,65 +8,59 @@ generator client {
 }
 
 model User {
-  id           Int       @id @default(autoincrement())
-  email        String    @unique @db.VarChar(20)
-  name         String    @db.VarChar(20)
-  nickname     String    @unique @db.VarChar(15)
-  password     String    @db.VarChar(100)
-  createAt     DateTime  @default(now())
-  updateAt     DateTime? @updatedAt
-  isAdmin      Int       @default(0)
-  phone_number Int       @unique
-  birth        Int
-
-  posts Post[]
-
+  id              Int       @id @default(autoincrement())
+  account         String    @unique @db.VarChar(20)
+  email           String    @unique @db.VarChar(20)
+  name            String    @db.VarChar(20)
+  nickname        String    @unique @db.VarChar(15)
+  password        String    @db.VarChar(100)
+  createAt        DateTime  @default(now())
+  updateAt        DateTime? @updatedAt
+  isAdmin         Int       @default(0)
+  phone_number    String?   @unique @db.VarChar(50)
+  all_tag_keyword Tag[]
+  posts           Post[]
   @@map("user")
 }
 
 model Post {
-  id       Int       @id @default(autoincrement())
-  content  String    @db.Text
-  createAt DateTime  @default(now())
-  updateAt DateTime? @updatedAt
-  author   User      @relation(fields: [user_id], references: [id])
-  user_id  Int
-
-
-  image    Image?
-  hashtags PostHashtag[]
-
+  id         Int       @id @default(autoincrement())
+  content    String    @db.Text
+  createAt   DateTime  @default(now())
+  updateAt   DateTime? @updatedAt
+  isFavorite Boolean   @default(false)
+  author     User      @relation(fields: [user_id], references: [id])
+  user_id    Int
+  post_tag         Tag?     @relation(fields: [tagAndKeyword_id], references: [id])
+  tagAndKeyword_id Int?
+  post_keyword     Keyword? @relation(fields: [keyword_id], references: [id])
+  keyword_id       Int?
   @@map("post")
 }
 
-model Image {
+
+model Tag {
   id        Int      @id @default(autoincrement())
-  src       String
+  tag       String   @unique @db.VarChar(20)
+  tag_color String   @default("blue")
   createAt  DateTime @default(now())
   updateAt  DateTime @updatedAt
-  postImage Post     @relation(fields: [post_id], references: [id])
-  post_id   Int
-
-  @@map("image")
+  post      Post[]
+  author    User     @relation(fields: [author_id], references: [id])
+  author_id Int
+  keyword Keyword[]
+  @@map("tag")
 }
 
-model Hashtag {
-  id           Int           @id @default(autoincrement())
-  name         String        @db.VarChar(20)
-  createAt     DateTime      @default(now())
-  updateAt     DateTime      @updatedAt
-  posthashtags PostHashtag[]
-
-
-  @@map("hash_tag")
-}
-
-model PostHashtag {
-  post        Post    @relation(fields: [post_id], references: [id])
-  post_id     Int
-  hashtag     Hashtag @relation(fields: [hash_tag_id], references: [id])
-  hash_tag_id Int
-
-  @@id([post_id, hash_tag_id])
-  @@map("post_hashtag")
+model Keyword {
+  id            Int      @id @default(autoincrement())
+  keyword_name  String
+  keyword_color String   @default("red")
+  createAt      DateTime @default(now())
+  updateAt      DateTime @updatedAt
+  post          Post[]
+  parent_tag    Tag      @relation(fields: [parent_tag_id], references: [id])
+  parent_tag_id Int
+  @@unique([parent_tag_id, keyword_name])
+  @@map("keyword")
 }

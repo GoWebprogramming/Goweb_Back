@@ -9,6 +9,9 @@ import passportSession from '../configs/passport';
 import UserController from './controllers/UserController';
 import PostController from './controllers/PostController';
 import PostViewController from './controllers/PostViewController';
+import TagController from './controllers/TagController';
+import KeywordController from './controllers/KeywordController';
+
 const app = express();
 
 app.use(morgan('dev'));
@@ -33,6 +36,9 @@ app.use(passport.session());
 app.use('/users', UserController);
 app.use('/posts', PostController);
 app.use('/postview', PostViewController);
+app.use('/tag', TagController);
+app.use('/keyword', KeywordController);
+
 app.listen(env.PORT, () => {
   console.log('서버시작');
 });
