@@ -1,4 +1,3 @@
-import { getTagById } from '../repositories/TagRepository';
 import { findUserByAccount } from '../repositories/UserRepository';
 export const isLoggined = (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -42,16 +41,16 @@ export const checkUserWhenGetByAccount = async (req, res, next) => {
   }
 };
 
-//태그 수정, 삭제시 유저 authorization.
-export const checkUserWithTagId = async (req, res, next) => {
-  try {
-    const user = req.session.passport.user;
-    const isExist = await getTagById(req.body.tag_id);
-    if (!isExist || isExist.author_id !== user.id) {
-      return res.status(401).send('승인되지 않은 유저입니다..');
-    }
-    next();
-  } catch (err) {
-    console.error(err);
-  }
-};
+// //태그 수정, 삭제시 유저 authorization.
+// export const checkUserWithTagId = async (req, res, next) => {
+//   try {
+//     const user = req.session.passport.user;
+//     const isExist = await getTagById(req.body.tag_id);
+//     if (!isExist || isExist.author_id !== user.id) {
+//       return res.status(401).send('승인되지 않은 유저입니다..');
+//     }
+//     next();
+//   } catch (err) {
+//     console.error(err);
+//   }
+// };

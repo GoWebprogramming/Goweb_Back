@@ -1,6 +1,5 @@
 import { findUserById } from '../../repositories/UserRepository';
 import local from './local';
-// import * as oauth from './oauth';
 
 //처음 로그인할때 호출된다.
 //session에 id와 isAdmin을 저장한다.
@@ -22,6 +21,4 @@ export default passport => {
     }
   });
   local(passport);
-  // oauth.kakaoOAuth(passport);
-  // oauth.googleOAuth(passport);
 };

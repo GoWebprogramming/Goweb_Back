@@ -9,11 +9,12 @@ generator client {
 
 model User {
   id              Int       @id @default(autoincrement())
-  account         String    @unique @db.VarChar(20)
+  account         String?   @unique @db.VarChar(20)
   email           String    @unique @db.VarChar(20)
   name            String    @db.VarChar(20)
   nickname        String    @unique @db.VarChar(15)
-  password        String    @db.VarChar(100)
+  oauth           String?
+  password        String?   @db.VarChar(100)
   createAt        DateTime  @default(now())
   updateAt        DateTime? @updatedAt
   isAdmin         Int       @default(0)
@@ -31,36 +32,56 @@ model Post {
   isFavorite Boolean   @default(false)
   author     User      @relation(fields: [user_id], references: [id])
   user_id    Int
-  post_tag         Tag?     @relation(fields: [tagAndKeyword_id], references: [id])
-  tagAndKeyword_id Int?
-  post_keyword     Keyword? @relation(fields: [keyword_id], references: [id])
-  keyword_id       Int?
+
+
+  image        Image?
+  post_tag     Tag?     @relation(fields: [tag_id], references: [id])
+  tag_id       Int?
+  post_keyword Keyword? @relation(fields: [keyword_id], references: [id])
+  keyword_id   Int?
+
   @@map("post")
 }
 
 
 model Tag {
   id        Int      @id @default(autoincrement())
-  tag       String   @unique @db.VarChar(20)
-  tag_color String   @default("blue")
+  path      String
+  createAt  DateTime @default(now())
+  updateAt  DateTime @updatedAt
+  postImage Post?    @relation(fields: [post_id], references: [id])
+  post_id   Int?     @unique
+  user      User?    @relation(fields: [user_id], references: id)
+  user_id   Int
+
+  @@map("image")
+}
+
+model Tag {
+  id        Int      @id @default(autoincrement())
+  tag       String   @db.VarChar(20)
+  tag_color String   @default("gray")
   createAt  DateTime @default(now())
   updateAt  DateTime @updatedAt
   post      Post[]
   author    User     @relation(fields: [author_id], references: [id])
   author_id Int
+
   keyword Keyword[]
+  @@unique([author_id, tag], name: "author_id_tag")
   @@map("tag")
 }
 
 model Keyword {
   id            Int      @id @default(autoincrement())
   keyword_name  String
-  keyword_color String   @default("red")
+  keyword_color String   @default("gray")
   createAt      DateTime @default(now())
   updateAt      DateTime @updatedAt
   post          Post[]
   parent_tag    Tag      @relation(fields: [parent_tag_id], references: [id])
   parent_tag_id Int
-  @@unique([parent_tag_id, keyword_name])
+
+  @@unique([parent_tag_id, keyword_name], name: "parent_tag_id_keyword_name")
   @@map("keyword")
 }
